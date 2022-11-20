@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "950138774522",
+    "project_id": "shareyourthink-4ac13",
+    "storage_bucket": "shareyourthink-4ac13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950138774522:android:960c248fbab7815aec3a43",
+        "android_client_info": {
+          "package_name": "com.ozlem.shareyourthink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "950138774522-l7vr7f736fi7sv2459rki7hssu73eavk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPW3S80BiNHwHjtC7MtVzluIf-PjmxZGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "950138774522-l7vr7f736fi7sv2459rki7hssu73eavk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
