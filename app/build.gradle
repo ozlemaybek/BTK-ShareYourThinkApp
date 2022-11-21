@@ -1,18 +1,20 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    // xml-activity bağlatısı için :
+    id 'kotlin-android-extensions'
     // firebase için ekleme :
     id 'com.google.gms.google-services'
 }
 
 android {
     namespace 'com.ozlem.shareyourthink'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.ozlem.shareyourthink"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -48,4 +50,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.1.0')
     // Firebase'in analytics kısmı :
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    // Firebase authentication için modul entegre edelim:
+    implementation 'com.google.firebase:firebase-auth-ktx'
 }
