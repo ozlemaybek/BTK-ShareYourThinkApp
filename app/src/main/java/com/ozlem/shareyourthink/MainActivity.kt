@@ -3,10 +3,13 @@ package com.ozlem.shareyourthink
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 // xml-activty bağlantısı için:
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,12 +21,28 @@ class MainActivity : AppCompatActivity() {
     // Bir FirebaseAuth objesi oluşturalım:
     private lateinit var auth: FirebaseAuth
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // Oluşturduğumuz FirebaseAuth objesini initialize edelim:
         auth = Firebase.auth
+
+        // Giriş yapmış kullanıcıyı hatırlamak:
+        // currentUser bize nullable olarak veriliyor yani oladabilir, olmayadabilir.
+        // Eğer null ise yok demektir yani firebase kullanıcının giriş yaptığını anlamamış demektir.
+        val currentUser = auth.currentUser
+
+        // Kullanıcı daha önce uygulamaya giriş yaptıysa ve uygulamayı şuan açarsa log-in ekranı gösterilmeden
+        // direkt diğer ekrana geçilecek.
+        if(currentUser != null){
+            val intent = Intent(this, ThinkActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        // Peki ya kullanıcı çıkış yapıp başka bir hesapla giriş yapmak isterse
     }
 
     fun signInOnclick(view: View){
@@ -36,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password) .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     //Kullanıcı şu anda girdi. (current user: güncel kullanıcı)
-                    val currentUser = auth.currentUser?.email.toString()
+                    val currentUser = auth.currentUser?.displayName.toString()
                     Toast.makeText(applicationContext,"Welcome ${currentUser}", Toast.LENGTH_LONG).show()
 
                     // sign in işlemi başarılı ise diğer ekrana geçelim:
@@ -56,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         // Kullanıcının girdiği email'i bir string olarak alalım:
         val email = emailTextID.text.toString()
         val password = passwordTextID.text.toString()
+        val username = usernameTextID.text.toString()
 
         // Kullanıcımızı oluşturalım:
         // Kullanıcıyı oluşturduğumuz satırın hemen devamında bir listener var ve ne olacağını kontrol ediyor.
@@ -65,6 +85,26 @@ class MainActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // if içnde isSuccessful ile task başarılımı bunu kontrol ediyoruz.
                     Toast.makeText(applicationContext, "Sign Up was successful.", Toast.LENGTH_LONG).show()
+
+                    // USERNAME'İ GÜNCELLEMEK:
+                    // Önce güncel kullanıcıyı alalım:
+                    val currentUser = auth.currentUser
+                    // Şimdi güncel kullanıcı ile ilgili yapılacak request'i oluşturalım:
+                    // userProfileChangeRequest: firebase'de hazır tanımlı bir fonksiyon.
+                    val profileUpdatesRequest = userProfileChangeRequest {
+                        displayName = username
+                    }
+
+                    // Şimdi yukarıda oluşturduğumuz profil güncelleme isteğini alıp aşağıda kullanabiliriz.
+                    if(currentUser != null){
+                        currentUser.updateProfile(profileUpdatesRequest).addOnCompleteListener { task ->
+                            if(task.isSuccessful){
+                                Toast.makeText(applicationContext, "Profile username added.", Toast.LENGTH_LONG).show()
+                            }
+
+                        }
+                    }
+
 
                     // Kayıt olma işlemi başarılı ise kullanıcı ThinkActivity ekranına aktarılacak:
                     // 1.parametre: context(bulunduğum yer)
