@@ -36,6 +36,10 @@ class ThinkActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
+        }else if(item.itemId == R.id.do_share_id){
+            val intent = Intent(this, SharingActivity::class.java)
+            startActivity(intent)
+            // finish() demedik çünkü kullanıcı geri dönmek isteyebilir.
         }
         return super.onOptionsItemSelected(item)
     }
