@@ -13,21 +13,21 @@
         android:theme="@style/Theme.ShareYourThink"
         tools:targetApi="31">
         <activity
-            android:name=".SharingActivity"
+            android:name=".view.SharingActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ThinkActivity"
+            android:name=".view.ThinkActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
