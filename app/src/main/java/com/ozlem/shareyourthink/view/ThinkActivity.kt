@@ -6,12 +6,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ozlem.shareyourthink.R
+import com.ozlem.shareyourthink.adapter.ThinkAdapter
 import com.ozlem.shareyourthink.model.Sharing
+import kotlinx.android.synthetic.main.activity_think.*
 
 class ThinkActivity : AppCompatActivity() {
 
@@ -21,6 +24,9 @@ class ThinkActivity : AppCompatActivity() {
     val db = Firebase.firestore
     // sharingLsit bir arraylist olacak ve içinde Sharing objelerini tutacak:
     var sharingList = ArrayList<Sharing>()
+    // RecyclerView Adapter'ımızı tanımlayalım:
+    // recyclerViewAdapter bir ThinkAdapter olacak:
+    private lateinit var recyclerViewAdapter : ThinkAdapter
 
     // Menü resource'unu bağlayacağımız fonksiyon:
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -61,6 +67,16 @@ class ThinkActivity : AppCompatActivity() {
         auth = Firebase.auth
 
         firebase_get_data()
+
+        // Bir layout manager oluşturduk.
+        // Bu şunu sağlıyor: RecylerView'da elemanlar alt alta mı gösterilsin grid layout olarakmı gösterilsin bunu seçiyoruz.
+        // Biz alt alta göstereceğiz.
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+
+        // recyclerViewAdapter'ı initialize edelim:
+        recyclerViewAdapter = ThinkAdapter(sharingList)
+        recyclerView.adapter = recyclerViewAdapter
     }
     fun firebase_get_data(){
         // Database'den veri çekelim:
@@ -91,6 +107,8 @@ class ThinkActivity : AppCompatActivity() {
                             val downloadedShare = Sharing(username, sharedComment, imageUrl)
                             sharingList.add(downloadedShare)
                         }
+                        // Yeni veri geldi haberin olsun diyoruz böylece recylerView verileri göstermeye çalışacak:
+                        recyclerViewAdapter.notifyDataSetChanged()
                     }
 
                 }
