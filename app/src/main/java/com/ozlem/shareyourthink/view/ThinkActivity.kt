@@ -1,5 +1,6 @@
 package com.ozlem.shareyourthink.view
 
+
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ozlem.shareyourthink.R
@@ -80,7 +82,7 @@ class ThinkActivity : AppCompatActivity() {
     }
     fun firebase_get_data(){
         // Database'den veri çekelim:
-        db.collection("Shares").addSnapshotListener{snapshot, error ->
+        db.collection("Shares").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener{ snapshot, error ->
             if(error != null){
                 Toast.makeText(this, error.localizedMessage, Toast.LENGTH_LONG).show()
             }else{
