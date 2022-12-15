@@ -8,9 +8,11 @@
 
     <EditText
         android:id="@+id/sharingTextID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="124dp"
+        android:layout_width="377dp"
+        android:layout_height="121dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="33dp"
+        android:layout_marginEnd="18dp"
         android:ems="10"
         android:hint="Enter your sharing..."
         android:inputType="textPersonName"
@@ -23,10 +25,35 @@
         android:id="@+id/shareButtonID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="49dp"
+        android:layout_marginRight="2dp"
         android:onClick="shareButtonOnClick"
         android:text="SHARE"
-        app:layout_constraintEnd_toEndOf="@+id/sharingTextID"
-        app:layout_constraintStart_toStartOf="@+id/sharingTextID"
+        app:layout_constraintBottom_toTopOf="@+id/imageViewID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/addImageButtonID"
         app:layout_constraintTop_toBottomOf="@+id/sharingTextID" />
+
+    <Button
+        android:id="@+id/addImageButtonID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:hint="ADD IMAGE"
+        android:onClick="addImageButtonOnClick"
+        android:text="ADD IMAGE"
+        app:layout_constraintBottom_toTopOf="@+id/imageViewID"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sharingTextID" />
+
+    <ImageView
+        android:id="@+id/imageViewID"
+        android:layout_width="215dp"
+        android:layout_height="227dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sharingTextID"
+        app:layout_constraintVertical_bias="0.504"
+        app:srcCompat="@drawable/ic_launcher_background" />
 </androidx.constraintlayout.widget.ConstraintLayout>

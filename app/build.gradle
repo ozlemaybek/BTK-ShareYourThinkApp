@@ -54,4 +54,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     // Cloud Firestore için:
     implementation 'com.google.firebase:firebase-firestore-ktx'
+    // Cloud Storage için:
+    implementation 'com.google.firebase:firebase-storage-ktx'
 }
