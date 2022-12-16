@@ -19,8 +19,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.ozlem.shareyourthink.R
 import kotlinx.android.synthetic.main.activity_sharing.*
+import java.util.UUID
 
 class SharingActivity : AppCompatActivity() {
 
@@ -34,6 +36,8 @@ class SharingActivity : AppCompatActivity() {
     var choosenImage : Uri? = null
     // bitmap android'de görselleri tuttuğumuz sınıftır.
     var choosenBitmap : Bitmap? = null
+    // Bir storage objesi oluşturalım:
+    val storage = Firebase.storage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,34 +46,71 @@ class SharingActivity : AppCompatActivity() {
     }
 
     fun shareButtonOnClick(view : View){
-        // Kullanıcının paylaşmak istediği yorumu alalım:
-        val sharedComment = sharingTextID.text.toString()
-        val username = auth.currentUser!!.displayName.toString()
-        // tarihi almak için firebase'den gelen Timestamp sınıfını kullanalım:
-        // Şuandaki tarihi alır:
-        val date = Timestamp.now()
 
-        // Database'e ekleyeceğimiz şeyleri bir hashmap içine koyarak ekleyeceğiz.
-        // 1.parametre: anahtar kelime (key) - field name. Anahtar kelimelerim hep string olacak çünkü field name'ler string olmak zorunda.
-        // 2.parametre: value. (Değer herhangi bir şey olabileceği için Any dedik, Çünkü farklı farklı veri türlerini kaydedebiliriz.)
-        val sharedCommentMap = hashMapOf<String, Any>()
-        // Oluşturduğumuz Map içine eklemelerimizi yapalım:
-        // 1.parametre: key
-        // 2.parametre: value
-        sharedCommentMap.put("sharedComment", sharedComment)
-        sharedCommentMap.put("username", username)
-        sharedCommentMap.put("date", date)
+        if(choosenImage != null){
+            // Bir referans oluşturalım:
+            // reference değişkeni bizim depomuzun kendisine referans veriyor.
+            val reference = storage.reference
 
-        // Şimdi yukarıda aldığımız 3 bilgiyi veritabanımıza kaydedelim.
-        // collectionPath: collection'ımızın isminin ne olmasını istiyorsak o.
-        db.collection("Shares").add(sharedCommentMap).addOnCompleteListener{ task ->
-            if(task.isSuccessful) {
-                // İşlem başarılı ise bu activity'yi sonlandır ve ThinkActivity.kt'ye geri dön:
-                finish()
+            // Her defasında random oluşturulacak unique bir id oluşturmak istiyoruz:
+            // Java'da bulunan UUID sınıfını kullanalım.
+            val uuid = UUID.randomUUID()
+            val imageName = "${uuid}.jpg"
+
+            // Storage modülünde images klasörünü zaten oluşturduk fakat oluşturmamıza gerek yoktu.
+            // Aşağıdaki kod satırını yazdığımızda images klasörü otomatik olarak depo içerisinde oluşturulacaktır.
+            val imageReference = reference.child("images").child("imageName")
+
+            // choosenImage nullable olduğu için hata verdi !! ile düzelttik:
+            imageReference.putFile(choosenImage!!).addOnSuccessListener { task ->
+                // Yüklendikten sonra url'i almalıyız.
+                // URL ALINACAK:
+                val uploadedImageReference = reference.child("images").child("imageName")
+                uploadedImageReference.downloadUrl.addOnSuccessListener{ uri ->
+                    // downloadUrl içinde resmin Url'i tutuluyor:
+                    val downloadUrl = uri.toString()
+                    println(downloadUrl)
+
+                        // comment içi başladı:
+
+                    // Kullanıcının paylaşmak istediği yorumu alalım:
+                    val sharedComment = sharingTextID.text.toString()
+                    val username = auth.currentUser!!.displayName.toString()
+                    // tarihi almak için firebase'den gelen Timestamp sınıfını kullanalım:
+                    // Şuandaki tarihi alır:
+                    val date = Timestamp.now()
+
+                    // Database'e ekleyeceğimiz şeyleri bir hashmap içine koyarak ekleyeceğiz.
+                    // 1.parametre: anahtar kelime (key) - field name. Anahtar kelimelerim hep string olacak çünkü field name'ler string olmak zorunda.
+                    // 2.parametre: value. (Değer herhangi bir şey olabileceği için Any dedik, Çünkü farklı farklı veri türlerini kaydedebiliriz.)
+                    val sharedCommentMap = hashMapOf<String, Any>()
+                    // Oluşturduğumuz Map içine eklemelerimizi yapalım:
+                    // 1.parametre: key
+                    // 2.parametre: value
+                    sharedCommentMap.put("sharedComment", sharedComment)
+                    sharedCommentMap.put("username", username)
+                    sharedCommentMap.put("date", date)
+                    sharedCommentMap.put("imageUrl",downloadUrl)
+
+                    // Şimdi yukarıda aldığımız 3 bilgiyi veritabanımıza kaydedelim.
+                    // collectionPath: collection'ımızın isminin ne olmasını istiyorsak o.
+                    db.collection("Shares").add(sharedCommentMap).addOnCompleteListener{ task ->
+                        if(task.isSuccessful) {
+                            // İşlem başarılı ise bu activity'yi sonlandır ve ThinkActivity.kt'ye geri dön:
+                            finish()
+                        }
+                    }.addOnFailureListener{ exception ->
+                        Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
+
+                    // comment içi bitti
+                }
+            }.addOnFailureListener { exception ->
+                // Burada exception fırlatılırsa onu kontrol edelim:
+                Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_LONG).show()
             }
-        }.addOnFailureListener{ exception ->
-            Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_LONG).show()
         }
+
     }
 
     fun addImageButtonOnClick(view : View){
