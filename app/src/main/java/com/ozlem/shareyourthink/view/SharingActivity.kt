@@ -67,50 +67,54 @@ class SharingActivity : AppCompatActivity() {
                 // URL ALINACAK:
                 val uploadedImageReference = reference.child("images").child("imageName")
                 uploadedImageReference.downloadUrl.addOnSuccessListener{ uri ->
-                    // downloadUrl içinde resmin Url'i tutuluyor:
                     val downloadUrl = uri.toString()
-                    println(downloadUrl)
-
-                        // comment içi başladı:
-
-                    // Kullanıcının paylaşmak istediği yorumu alalım:
-                    val sharedComment = sharingTextID.text.toString()
-                    val username = auth.currentUser!!.displayName.toString()
-                    // tarihi almak için firebase'den gelen Timestamp sınıfını kullanalım:
-                    // Şuandaki tarihi alır:
-                    val date = Timestamp.now()
-
-                    // Database'e ekleyeceğimiz şeyleri bir hashmap içine koyarak ekleyeceğiz.
-                    // 1.parametre: anahtar kelime (key) - field name. Anahtar kelimelerim hep string olacak çünkü field name'ler string olmak zorunda.
-                    // 2.parametre: value. (Değer herhangi bir şey olabileceği için Any dedik, Çünkü farklı farklı veri türlerini kaydedebiliriz.)
-                    val sharedCommentMap = hashMapOf<String, Any>()
-                    // Oluşturduğumuz Map içine eklemelerimizi yapalım:
-                    // 1.parametre: key
-                    // 2.parametre: value
-                    sharedCommentMap.put("sharedComment", sharedComment)
-                    sharedCommentMap.put("username", username)
-                    sharedCommentMap.put("date", date)
-                    sharedCommentMap.put("imageUrl",downloadUrl)
-
-                    // Şimdi yukarıda aldığımız 3 bilgiyi veritabanımıza kaydedelim.
-                    // collectionPath: collection'ımızın isminin ne olmasını istiyorsak o.
-                    db.collection("Shares").add(sharedCommentMap).addOnCompleteListener{ task ->
-                        if(task.isSuccessful) {
-                            // İşlem başarılı ise bu activity'yi sonlandır ve ThinkActivity.kt'ye geri dön:
-                            finish()
-                        }
-                    }.addOnFailureListener{ exception ->
-                        Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_LONG).show()
-                    }
-
-                    // comment içi bitti
+                    saveToDatabase(downloadUrl)
                 }
             }.addOnFailureListener { exception ->
                 // Burada exception fırlatılırsa onu kontrol edelim:
                 Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_LONG).show()
             }
+        }else{
+            // choosenImage null ise yani seçilen görsel yoksa ne yapılacak:
+            saveToDatabase(null)
         }
 
+    }
+
+    private fun saveToDatabase(downloadUrl : String?){
+
+        // Kullanıcının paylaşmak istediği yorumu alalım:
+        val sharedComment = sharingTextID.text.toString()
+        val username = auth.currentUser!!.displayName.toString()
+        // tarihi almak için firebase'den gelen Timestamp sınıfını kullanalım:
+        // Şuandaki tarihi alır:
+        val date = Timestamp.now()
+
+        // Database'e ekleyeceğimiz şeyleri bir hashmap içine koyarak ekleyeceğiz.
+        // 1.parametre: anahtar kelime (key) - field name. Anahtar kelimelerim hep string olacak çünkü field name'ler string olmak zorunda.
+        // 2.parametre: value. (Değer herhangi bir şey olabileceği için Any dedik, Çünkü farklı farklı veri türlerini kaydedebiliriz.)
+        val sharedCommentMap = hashMapOf<String, Any>()
+        // Oluşturduğumuz Map içine eklemelerimizi yapalım:
+        // 1.parametre: key
+        // 2.parametre: value
+        sharedCommentMap.put("sharedComment", sharedComment)
+        sharedCommentMap.put("username", username)
+        sharedCommentMap.put("date", date)
+
+        if(downloadUrl != null){
+            sharedCommentMap.put("imageUrl", downloadUrl)
+        }
+
+        // Şimdi yukarıda aldığımız 3 bilgiyi veritabanımıza kaydedelim.
+        // collectionPath: collection'ımızın isminin ne olmasını istiyorsak o.
+        db.collection("Shares").add(sharedCommentMap).addOnCompleteListener{ task ->
+            if(task.isSuccessful) {
+                // İşlem başarılı ise bu activity'yi sonlandır ve ThinkActivity.kt'ye geri dön:
+                finish()
+            }
+        }.addOnFailureListener{ exception ->
+            Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_LONG).show()
+        }
     }
 
     fun addImageButtonOnClick(view : View){

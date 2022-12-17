@@ -25,4 +25,12 @@
         android:id="@+id/recycler_row_sharing_message">
     </TextView>
 
+    <ImageView
+        android:id="@+id/recycler_row_imageViewID"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:visibility="gone"
+        android:layout_margin="5dp"
+    ></ImageView>
+
 </LinearLayout>

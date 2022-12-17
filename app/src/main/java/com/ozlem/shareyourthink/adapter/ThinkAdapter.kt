@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ozlem.shareyourthink.R
 import com.ozlem.shareyourthink.model.Sharing
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.recycler_row.view.*
 
 // Önce class'ın bir recyclerView adapter olduğunu söyledik.
@@ -36,6 +37,17 @@ class ThinkAdapter (val sharingList : ArrayList<Sharing>) : RecyclerView.Adapter
     override fun onBindViewHolder(holder: SharingHolder, position: Int) {
         holder.itemView.recycler_row_username.text = sharingList[position].username
         holder.itemView.recycler_row_sharing_message.text = sharingList[position].sharedComment
+
+        // İlgili pozisyondaki paylaşımın imageUrl'i null değilse resim gösterilecek demektir.
+        if(sharingList[position].imageUrl != null){
+            // Görselin visibility'sini değiştirelim:
+            holder.itemView.recycler_row_imageViewID.visibility = View.VISIBLE
+            // Picasso ile resimi yüklüyoruz:
+            // load kısmı nereden yükleyeceği
+            // into kısmı ise nereye yükleyeceği.
+            Picasso.get().load(sharingList[position].imageUrl).into(holder.itemView.recycler_row_imageViewID)
+        }
+
     }
 
     override fun getItemCount(): Int {
